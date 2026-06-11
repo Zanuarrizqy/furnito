@@ -7,39 +7,13 @@ datasource db {
   provider = "postgresql"
 }
 
-model Category {
-  id        String    @id @db.Uuid
-  name      String    @db.VarChar
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  Product   Product[]
-}
-
 model PasswordReset {
   id        String   @id @db.Uuid
   userId    String   @db.Uuid
   token     String
   expiresAt DateTime @db.Timestamptz(3)
   usedAt    DateTime @db.Timestamptz(3)
-  Users     Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model Product {
-  id          String         @id @db.Uuid
-  storeId     String         @db.Uuid
-  name        String         @db.VarChar
-  description String
-  price       Decimal        @db.Decimal
-  material    String         @db.VarChar
-  color       String         @db.VarChar
-  weight      Int
-  dimension   Int
-  status      status_product
-  viewCount   Int
-  createdAt   DateTime       @default(now()) @db.Timestamptz(6)
-  categoryId  String         @db.Uuid
-  Category    Category       @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Store       Store          @relation(fields: [storeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Review      Review[]
+  users     User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model RefreshToken {
@@ -48,31 +22,64 @@ model RefreshToken {
   userId    String   @db.Uuid
   expiresAt DateTime @db.Timestamptz(3)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  Users     Users    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users     User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Review {
-  id        String      @id @db.Uuid
-  productId String      @db.Uuid
-  userId    String      @db.Uuid
-  rating    rating_int?
-  createdAt DateTime    @default(now()) @db.Timestamptz(6)
-  Product   Product     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Users     Users       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        String     @id @db.Uuid
+  produkId  String     @db.Uuid
+  userId    String     @db.Uuid
+  rating    rating_int
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  produk    Produk     @relation(fields: [produkId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users     User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Store {
-  id         String    @id @db.Uuid
-  userId     String    @db.Uuid
-  name       String    @db.VarChar
-  address    String
-  isVerified Boolean
-  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
-  Product    Product[]
-  Users      Users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Store_userId_user_fkey")
+model Kategori {
+  id        String   @id @db.Uuid
+  nama      String   @db.VarChar
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  Produk    Produk[]
 }
 
-model Users {
+model Produk {
+  id         String         @id @db.Uuid
+  tokoId     String         @db.Uuid
+  nama       String         @db.VarChar
+  deskripsi  String
+  harga      Decimal        @db.Decimal
+  material   String         @db.VarChar
+  warna      String         @db.VarChar
+  berat      Int
+  dimensi    Int
+  status     status_product
+  viewCount  Int
+  createdAt  DateTime       @default(now()) @db.Timestamptz(6)
+  kategoriId String         @db.Uuid
+  garansi    String         @db.VarChar
+  sku        String         @db.VarChar(15)
+  kategori   Kategori       @relation(fields: [kategoriId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  toko       Toko           @relation(fields: [tokoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Review     Review[]
+}
+
+model Toko {
+  id            String    @id @db.Uuid
+  userId        String    @db.Uuid
+  namaToko      String    @db.VarChar
+  alamatToko    String
+  isVerified    Boolean
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6)
+  deskripsiToko String?   @db.VarChar
+  instagramToko String?   @db.VarChar
+  nomorToko     String    @db.VarChar(15)
+  jamBuka       DateTime? @db.Time(6)
+  jamTutup      DateTime? @db.Time(6)
+  Produk        Produk[]
+  user          User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model User {
   id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email         String          @db.VarChar(50)
   password      String          @db.VarChar(50)
@@ -81,10 +88,11 @@ model Users {
   createdAt     DateTime        @db.Timestamptz(6)
   updatedAt     DateTime        @db.Timetz(6)
   isActive      Boolean         @default(true)
+  nomorTelepon  String          @db.VarChar(15)
   PasswordReset PasswordReset[]
   RefreshToken  RefreshToken[]
   Review        Review[]
-  Store         Store[]
+  Toko          Toko[]
 }
 
 enum rating_int {
