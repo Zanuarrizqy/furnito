@@ -5,16 +5,27 @@ BEGIN;
 
 ALTER TABLE IF EXISTS public."PasswordReset" DROP CONSTRAINT IF EXISTS None;
 
+<<<<<<< HEAD
 ALTER TABLE IF EXISTS public."Products" DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS public."Products" DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS public."RefreshTokens" DROP CONSTRAINT IF EXISTS None;
+=======
+ALTER TABLE IF EXISTS public."Produk" DROP CONSTRAINT IF EXISTS None;
+
+ALTER TABLE IF EXISTS public."Produk" DROP CONSTRAINT IF EXISTS None;
+
+ALTER TABLE IF EXISTS public."RefreshToken" DROP CONSTRAINT IF EXISTS None;
+
+ALTER TABLE IF EXISTS public."Toko" DROP CONSTRAINT IF EXISTS None;
+>>>>>>> d862bbd28013df7e4c9144196ab828dd74801f1d
 
 ALTER TABLE IF EXISTS public."Review" DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS public."Review" DROP CONSTRAINT IF EXISTS None;
 
+<<<<<<< HEAD
 ALTER TABLE IF EXISTS public."Stores" DROP CONSTRAINT IF EXISTS None;
 
 
@@ -29,18 +40,27 @@ CREATE TABLE IF NOT EXISTS public."Categories"
     PRIMARY KEY (id)
 );
 
+=======
+
+
+>>>>>>> d862bbd28013df7e4c9144196ab828dd74801f1d
 DROP TABLE IF EXISTS public."PasswordReset";
 
 CREATE TABLE IF NOT EXISTS public."PasswordReset"
 (
     id uuid NOT NULL,
+<<<<<<< HEAD
     "usersId" uuid NOT NULL,
+=======
+    "userId" uuid NOT NULL,
+>>>>>>> d862bbd28013df7e4c9144196ab828dd74801f1d
     token text COLLATE pg_catalog."default" NOT NULL,
     "expiresAt" timestamp(3) with time zone NOT NULL,
     "usedAt" timestamp(3) with time zone NOT NULL,
     PRIMARY KEY (id)
 );
 
+<<<<<<< HEAD
 DROP TABLE IF EXISTS public."Products";
 
 CREATE TABLE IF NOT EXISTS public."Products"
@@ -108,6 +128,63 @@ CREATE TABLE IF NOT EXISTS public."Stores"
 DROP TABLE IF EXISTS public."Users";
 
 CREATE TABLE IF NOT EXISTS public."Users"
+=======
+DROP TABLE IF EXISTS public."Produk";
+
+CREATE TABLE IF NOT EXISTS public."Produk"
+(
+    id uuid NOT NULL,
+    "tokoId" uuid NOT NULL,
+    nama character varying COLLATE pg_catalog."default" NOT NULL,
+    deskripsi text COLLATE pg_catalog."default" NOT NULL,
+    harga numeric NOT NULL,
+    material character varying COLLATE pg_catalog."default" NOT NULL,
+    warna character varying COLLATE pg_catalog."default" NOT NULL,
+    berat integer NOT NULL,
+    dimensi integer NOT NULL,
+    status status_product NOT NULL,
+    "viewCount" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT now(),
+    "kategoriId" uuid NOT NULL,
+    garansi character varying NOT NULL,
+    sku character varying(15) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public."RefreshToken";
+
+CREATE TABLE IF NOT EXISTS public."RefreshToken"
+(
+    id uuid NOT NULL,
+    token text COLLATE pg_catalog."default" NOT NULL,
+    "userId" uuid NOT NULL,
+    "expiresAt" timestamp(3) with time zone NOT NULL,
+    "createdAt" timestamp(3) with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT "RefreshToken_pkey" PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public."Toko";
+
+CREATE TABLE IF NOT EXISTS public."Toko"
+(
+    id uuid NOT NULL,
+    "userId" uuid NOT NULL,
+    "namaToko" character varying COLLATE pg_catalog."default" NOT NULL,
+    "alamatToko" text COLLATE pg_catalog."default" NOT NULL,
+    "isVerified" boolean NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT now(),
+    "deskripsiToko" character varying,
+    "instagramToko" character varying,
+    "nomorToko" character varying(15) NOT NULL,
+    "jamBuka" time without time zone,
+    "jamTutup" time without time zone,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public."User";
+
+CREATE TABLE IF NOT EXISTS public."User"
+>>>>>>> d862bbd28013df7e4c9144196ab828dd74801f1d
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     email character varying(50) COLLATE pg_catalog."default" NOT NULL,
@@ -117,11 +194,38 @@ CREATE TABLE IF NOT EXISTS public."Users"
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" time with time zone NOT NULL,
     "isActive" boolean NOT NULL DEFAULT true,
+<<<<<<< HEAD
     "telephoneNumber" character varying(15) COLLATE pg_catalog."default" NOT NULL,
+=======
+    "nomorTelepon" character varying(15) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public."Review";
+
+CREATE TABLE IF NOT EXISTS public."Review"
+(
+    id uuid NOT NULL,
+    "produkId" uuid NOT NULL,
+    "userId" uuid NOT NULL,
+    rating rating_int NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public."Kategori";
+
+CREATE TABLE IF NOT EXISTS public."Kategori"
+(
+    id uuid NOT NULL,
+    nama character varying NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT now(),
+>>>>>>> d862bbd28013df7e4c9144196ab828dd74801f1d
     PRIMARY KEY (id)
 );
 
 ALTER TABLE IF EXISTS public."PasswordReset"
+<<<<<<< HEAD
     ADD FOREIGN KEY ("usersId")
     REFERENCES public."Users" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
@@ -172,6 +276,58 @@ ALTER TABLE IF EXISTS public."Review"
 ALTER TABLE IF EXISTS public."Stores"
     ADD FOREIGN KEY ("userId")
     REFERENCES public."Users" (id) MATCH SIMPLE
+=======
+    ADD FOREIGN KEY ("userId")
+    REFERENCES public."User" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Produk"
+    ADD FOREIGN KEY ("tokoId")
+    REFERENCES public."Toko" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Produk"
+    ADD FOREIGN KEY ("kategoriId")
+    REFERENCES public."Kategori" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."RefreshToken"
+    ADD FOREIGN KEY ("userId")
+    REFERENCES public."User" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Toko"
+    ADD FOREIGN KEY ("userId")
+    REFERENCES public."User" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Review"
+    ADD FOREIGN KEY ("produkId")
+    REFERENCES public."Produk" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Review"
+    ADD FOREIGN KEY ("userId")
+    REFERENCES public."User" (id) MATCH SIMPLE
+>>>>>>> d862bbd28013df7e4c9144196ab828dd74801f1d
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
